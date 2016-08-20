@@ -292,7 +292,7 @@ def _normal_float(val):
     return 0.0 <= val <= 1.0
 
 def main(argv):
-    parser = argparse.ArgumentParser(prog='fry')
+    parser = argparse.ArgumentParser(prog='crs.py')
     subparsers = parser.add_subparsers(help="sub-commands")
 
     # create_parser = subparsers.add_parser('create-db', help="create the db")
@@ -348,11 +348,7 @@ def main(argv):
     crash_insert_parser = subparsers.add_parser('insert-crash', help="insert a crash for AFL")
     crash_insert_parser.add_argument("cs", type=str, help="the challenge set name")
     crash_insert_parser.add_argument("crash", type=argparse.FileType("rb"), help="crash to upload")
-<<<<<<< HEAD
-    crash_insert_parser.add_argument("crash_type", type=str, help="type of crash", choices=Crash.kind.choices)
-=======
     crash_insert_parser.add_argument("crash_kind", type=str, help="kind of crash (default 'ip_overwrite')", choices=Crash.kind.choices)
->>>>>>> fc03de6... When inserting crashes, must declare kind
     crash_insert_parser.set_defaults(func=insert_crash)
 
     insert_parser = subparsers.add_parser('insert', help="insert a test or crash for AFL/Rex")
