@@ -284,9 +284,11 @@ def download_exploits(args):
     dir_name = "exploits-cs-%s" % cs.name
     quiet_mkdir(dir_name)
 
-    for e in cs.exploits:
-        with open(os.path.join(dir_name, "%d_%s_%s.pov"), 'wb') as f:
+    for i, e in enumerate(cs.exploits):
+        with open(os.path.join(dir_name, "%d_%s_%d.pov" % (i, e.method, e.reliability*100)), 'wb') as f:
             f.write(e.blob)
+        with open(os.path.join(dir_name, "%d_%s_%d.c" % (i, e.method, e.reliability*100)), 'wb') as f:
+            f.write(e.c_code)
 
 def _normal_float(val):
     return 0.0 <= val <= 1.0

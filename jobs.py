@@ -26,9 +26,9 @@ def color_me(s, padto=0, ljust=True, extra=None):
 
 def spawn_job(ident):
     os.chdir(worker_dir)
-    logfile = ident + '.log'
-    pidfile = ident + '.pid'
-    os.system('JOB_ID=%s worker >%s 2>&1 & echo $! >%s' % (ident, logfile, pidfile))
+    logfile = str(ident) + '.log'
+    pidfile = str(ident) + '.pid'
+    os.system('JOB_ID=%d worker >%s 2>&1 & echo $! >%s' % (ident, logfile, pidfile))
 
 def is_job_alive(jid):
     pid_file = os.path.join(worker_dir, '%d.pid' % jid)
@@ -38,6 +38,14 @@ def is_job_alive(jid):
     except (OSError, IOError):
         return False
     return True
+
+def kill_job(jid, signal=15):
+    pid_file = os.path.join(worker_dir, '%d.pid' % jid)
+    try:
+        with open(pid_file) as f: the_pid = int(f.read())
+        os.kill(the_pid, signal)
+    except (OSError, IOError):
+        print 'Job is not running!'
 
 def print_jobs():
     print '  ID   Priority   CS Name           CB Name                 Worker            Status'
@@ -59,15 +67,17 @@ def print_jobs():
         print ' %6d    %3d   %s   %s   %s   %s' % (j.id, j.priority, color_me(cs, 15), color_me(cbn, 20), color_me(j.worker, 20), color_me(status))
 
 def usage():
-    print 'Usage: ./jobs.py (list | start <id>)'
+    print 'Usage: ./jobs.py (list | start <id> | kill <id>)'
 
 if __name__ == '__main__':
     try:
         if sys.argv[1] == 'list':
             print_jobs()
         elif sys.argv[1] == 'start':
-            spawn_job(sys.argv[2])
+            spawn_job(int(sys.argv[2]))
+        elif sys.argv[1] == 'kill':
+            kill_job(int(sys.argv[2]))
         else:
             usage()
-    except KeyError:
+    except (KeyError, IndexError, ValueError):
         usage()
